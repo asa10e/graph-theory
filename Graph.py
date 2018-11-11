@@ -1,5 +1,6 @@
-from itertools import permutations
-from math import factorial
+from itertools as it
+import math
+import numpy as np
 
 class Graph(object):
     """
@@ -28,6 +29,16 @@ class Graph(object):
             for n in neighbors:
                 if n > v: # Avoids adding edges twice
                     edges = edges.union({(v, n)})
+
+        return edges
+
+    def all_edges(self):
+        """Set of edges of a graph INCLUDING REVERSALS"""
+        edges = set()
+        for v in self.dic:
+            neighbors = self.neighbors(v)
+            for n in neighbors:
+                edges = edges.union({(v, n)})
 
         return edges
 
@@ -60,17 +71,37 @@ class Graph(object):
         else:
             return None
 
-    def all_spines(self):
+    def spines(self):
         """
-        A generator of all possible spines from a graph's vertices,
-        up to reversals, which we can ignore by symmetry
+        A generator of the possible spines from a graph's vertices
+        up to reversals, which we can ignore by symmetry.
         """
         vertices = self.vertices()
 
-        iterator = permutations(vertices)
-        half_permutations = factorial(len(vertices))/2
+        iterator = it.permutations(vertices)
+        half_permutations = math.factorial(len(vertices))/2
         count = 0
         for spine in iterator:
             if count < half_permutations:
                 count += 1
                 yield spine
+
+    def all_spines(self):
+        """
+        A generator of all  spines from a graph's vertices,
+        INCLUDING REVERSALS
+        """
+        vertices = self.vertices()
+
+        iterator = it.permutations(vertices)
+        for spine in iterator:
+            yield spine
+
+    def matrix(self):
+        """Graph's adjacency matrix"""
+        dim = len(self.vertices())
+        matrix = np.zeros((dim,dim), dtype=int)
+        for e in self.all_edges():
+            matrix[e[0],e[1]] = 1
+        return matrix
+    
