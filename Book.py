@@ -4,11 +4,11 @@ class Book(object):
 
     def __init__(self, pages = set()):
 
-        if len(set([p.spine for p in pages])) == 1:
-            self.spine = spine
-            self.pages = pages
-        else:
-            print('Pages must have identical spines!')
+        assert len(set([p.spine for p in pages])) == 1, 'All pages must have identical spines'
+
+        self.pages = pages
+        self.spine = next(iter(pages)).spine
+
 
     def is_nice_embedding(self):
         """
