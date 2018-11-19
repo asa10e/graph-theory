@@ -3,34 +3,51 @@ class Page(object):
     """
     A Page is a Graph fixed along a spine (a permutation of the Graph's vertices)
     """
-    def __init__(self, spine = tuple(), graph = None):
+    def __init__(self, spine = None, graph = None):
 
         if graph == None:
             graph = Graph({s:set() for s in spine})
 
+        if spine == None:
+            spine = graph.vertices()
+
         self.spine = spine
         self.graph = graph
 
-    def standardize(self):
-        """
-        Relabels the page such that the spine is in a (0,1,2,...) order,
-        and adjusts its edges accordingly
-        """
-        permutation = {s:self.spine.index(s) for s in self.spine}
-        # idx_to_s = {idx:s for s, idx in permutation.items()} # to reverse later if desired
-        perm_dic = {permutation[i]:[permutation[n] for n in self.graph.neighbors(i)] for i in self.spine}
-        mapped_dic = Graph(perm_dic)
+    def relabel(self, new_spine = None):
 
-        self.spine = sorted(self.spine)
-        self.graph = mapped_dic
+        if new_spine == None:
+            new_spine = tuple(sorted([i for i in self.spine]))
+
+        assert sorted(new_spine) == sorted(self.spine), "new_spine must be a permutation of the page's spine"
+
+        # Permutation takes current spine to new_spine
+        permutation = dict(zip(self.spine, new_spine))
+        #permutation = {s:self.spine.index(s) for s in new_spine}
+        perm_dic = {permutation[i]:set([permutation[n] for n in self.graph.neighbors(i)]) for i in self.spine}
+
+        self.spine = new_spine
+        self.graph = Graph(perm_dic)
+
+    # def standardize(self):
+    #     """
+    #     Relabels the page such that the spine is in a (0,1,2,...) order,
+    #     and adjusts its edges accordingly
+    #     """
+    #     permutation = {s:self.spine.index(s) for s in self.spine}
+    #     # idx_to_s = {idx:s for s, idx in permutation.items()} # to reverse later if desired
+    #     perm_dic = {permutation[i]:[permutation[n] for n in self.graph.neighbors(i)] for i in self.spine}
+    #     #mapped_dic = Graph(perm_dic)
+    #
+    #     self.spine = sorted(self.spine)
+    #     self.graph = Graph(perm_dic)
 
     def has_intersections(self):
         """
         True if the page's edges cross at least once
         False otherwise
         """
-
-        # TODO we could use .standardize() here
+        # TODO we could use .relabel() here instead
         permutation = {s:self.spine.index(s) for s in self.spine}
         idx_to_s = {idx:s for s, idx in permutation.items()} # to reverse later if desired
         perm_dic = {permutation[i]:[permutation[n] for n in self.graph.neighbors(i)] for i in self.spine}
