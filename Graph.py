@@ -5,8 +5,8 @@ import numpy as np
 class Graph(object):
     """
     A class for undirected graphs.
+    Initialize with a dictionary of vertices as keys and lists of vertices as values.
     """
-
     def __init__(self, dic = dict()):
         self.dic = dic
 
@@ -15,14 +15,14 @@ class Graph(object):
         return tuple(self.dic.keys())
 
     def neighbors(self, vertex):
-        """Set of neighbors of a given vertex in a graph"""
+        """Set of neighbors of a given vertex"""
         if vertex in self.dic:
             return set(self.dic[vertex])
         else:
             return set()
 
     def edges(self):
-        """Set of edges of a graph"""
+        """Set of edges"""
         edges = set()
         for v in self.dic:
             neighbors = self.neighbors(v)
@@ -33,7 +33,7 @@ class Graph(object):
         return edges
 
     def all_edges(self):
-        """Set of edges of a graph INCLUDING REVERSALS"""
+        """Set of edges of a graph, including reversals"""
         edges = set()
         for v in self.dic:
             neighbors = self.neighbors(v)
@@ -43,6 +43,7 @@ class Graph(object):
         return edges
 
     def add_edge(self, edge):
+        """Adds an edge to the graph object"""
         v1, v2 = edge # Unpack edge
         vertices = self.vertices()
         if (v1 in vertices) & (v2 in vertices):
@@ -50,10 +51,12 @@ class Graph(object):
             self.dic[v2].add(v1)
 
     def add_edges(self, edges):
+        """Accepts a list of edges and calls add_edge on each one"""
         for e in edges:
             self.add_edge(e)
 
     def del_edge(self, edge):
+        """Method to remove a given edge"""
         v1, v2 = edge # Unpack edge
         vertices = self.vertices()
         if (v1 in vertices) & (v2 in vertices):
@@ -61,10 +64,12 @@ class Graph(object):
             self.dic[v2].remove(v1)
 
     def del_edges(self, edges):
+        """Accepts a list of edges and calls del_edge on each one"""
         for e in edges:
             self.del_edge(e)
 
     def degree(self, vertex):
+        """Number of vertices distance 1 away from a given vertex"""
         if vertex in self.dic:
             neighbors = self.neighbors(vertex)
             return len(neighbors)
@@ -88,8 +93,7 @@ class Graph(object):
 
     def all_spines(self):
         """
-        A generator of all  spines from a graph's vertices,
-        INCLUDING REVERSALS
+        A generator of all  spines from a graph's vertices, including reversals
         """
         vertices = self.vertices()
 
@@ -100,8 +104,8 @@ class Graph(object):
     def matrix(self):
         """Graph's adjacency matrix"""
         dim = len(self.vertices())
-        matrix = np.zeros((dim,dim), dtype=int)
+        matrix = np.zeros((dim, dim), dtype=int)
         for e in self.all_edges():
-            matrix[e[0],e[1]] = 1
+            matrix[e[0], e[1]] = 1
         return matrix
     
